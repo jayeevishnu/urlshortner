@@ -1,5 +1,8 @@
-# URL Shortener - Complete Setup Guide
 
+# URL Shortener - Complete Setup Guide
+Demo Credientials - 
+Email - f@gmail.com.
+password - F@8gmail.com.
 ### System Requirements
 - **Node.js**: v16.0.0 or higher (LTS recommended)
 - **npm**: v8.0.0 or higher (comes with Node.js)
