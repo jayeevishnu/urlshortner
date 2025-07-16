@@ -1,4 +1,4 @@
-const {winston , transports ,format } = require('winston');
+const {winston , transports ,format , createLogger} = require('winston');
 
 // const logFormat = winston.format.combine(
 //   winston.format.timestamp(),
@@ -16,14 +16,14 @@ const {winston , transports ,format } = require('winston');
 //      new transports.Console(),
 //   ],
 // });
-const logger = winston.createLogger({
-  level: 'info',
+const logger = createLogger({
+  level: 'silly',
   format: format.combine(
     format.timestamp(),
     format.json()
   ),
   transports: [
-    new winston.transports.Console()
+    new transports.Console()
   ]
 });
 
