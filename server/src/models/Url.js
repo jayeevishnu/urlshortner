@@ -26,8 +26,7 @@ const urlSchema = new mongoose.Schema({
   shortCode: {
     type: String,
     required: true,
-    unique: true,
-    // index: true,
+    // unique: true,
   },
   urlHash: {
     type: String,
