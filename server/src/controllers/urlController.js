@@ -139,10 +139,10 @@ const redirectUrl = async (req, res) => {
 const getUrlStats = async (req, res) => {
   try {
     const { code } = req.params;
-    
+
     const url = await Url.findOne({ shortCode: code })
       .populate('user', 'username email');
-    
+
     if (!url) {
       return res.status(404).json({ error: 'URL not found' });
     }
@@ -153,6 +153,22 @@ const getUrlStats = async (req, res) => {
     }
 
     // Calculate statistics
+    const uniqueIps = [...new Set(url.clicks.map(click => click.ip))];
+    const recentClicks = url.clicks
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, 3);
+
+    const ipCount = {};
+    url.clicks.forEach(click => {
+      if (click.ip) {
+        ipCount[click.ip] = (ipCount[click.ip] || 0) + 1;
+      }
+    });
+    const topIps = Object.entries(ipCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([ip, count]) => ({ ip, count }));
+
     const stats = {
       url: {
         shortCode: url.shortCode,
@@ -164,8 +180,18 @@ const getUrlStats = async (req, res) => {
         isActive: url.isActive,
         expiresAt: url.expiresAt,
       },
+      summary: {
+        uniqueIps: uniqueIps.length,
+        recentClicks: recentClicks.length,
+        topIps,
+      },
       clickHistory: url.clicks.map(click => ({
-        ip: click.ip.substring(0, click.ip.lastIndexOf('.')) + '.xxx', // Anonymize IP
+        ip: click.ip,
+        timestamp: click.timestamp,
+        userAgent: click.userAgent,
+      })),
+      recentClicks: recentClicks.map(click => ({
+        ip: click.ip,
         timestamp: click.timestamp,
         userAgent: click.userAgent,
       })),
@@ -374,4 +400,4 @@ module.exports = {
   deleteUrl,
   updateUrl,
   getDashboardStats,
-}; 
+};
